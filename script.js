@@ -52,12 +52,12 @@ document.querySelector('input[name="store"][value="starter"]').dispatchEvent(new
 
 // Handle "Custom" rate selection
 document.getElementById("category-rate").addEventListener("change", (e) => {
-    const customRateContainer = document.getElementById("customize-rate-container");
+    const customizeRateContainer = document.getElementById("customize-rate-container");
 
-    if (e.target.value === "custom") {
-        customRateContainer.style.display = "block"; // Show input for custom rate
+    if (e.target.value === "customize") {
+        customizeRateContainer.style.display = "block"; // Show input for custom rate
     } else {
-        customRateContainer.style.display = "none"; // Hide input for custom rate
+        customizeRateContainer.style.display = "none"; // Hide input for custom rate
     }
 });
 
@@ -76,7 +76,7 @@ function limitDecimalInput(event) {
 }
 
 // Add event listeners for inputs to restrict decimals
-document.querySelectorAll('#item-cost, #shipping-cost, #selling-price, #shipping-charged, #withdrawal-rate, #sales-tax, #international-rate, #volume-discount, #per-order-fee, #sst, #ad-fee, #custom-rate').forEach((inputField) => {
+document.querySelectorAll('#item-cost, #shipping-cost, #selling-price, #shipping-charged, #withdrawal-rate, #sales-tax, #international-rate, #volume-discount, #per-order-fee, #sst, #ad-fee, #customize-rate').forEach((inputField) => {
     inputField.addEventListener("input", limitDecimalInput);
 });
 
@@ -94,9 +94,9 @@ document.getElementById("calculate-btn").addEventListener("click", () => {
         const categoryRateDropdown = document.getElementById("category-rate");
         let categoryRate = parseFloat(categoryRateDropdown.value) / 100 || 0.1325;
 
-        if (categoryRateDropdown.value === "custom") {
-            const customRateInput = parseFloat(document.getElementById("custom-rate").value) || 0;
-            categoryRate = customRateInput / 100;
+        if (categoryRateDropdown.value === "customize") {
+            const customizeRateInput = parseFloat(document.getElementById("customize-rate").value) || 0;
+            categoryRate = customizeRateInput / 100;
         }
 
         const internationalRate = parseFloat(document.getElementById("international-rate").value) / 100 || 0.013;
@@ -163,5 +163,5 @@ document.getElementById("reset-btn").addEventListener("click", () => {
     });
 
     // Hide custom rate input on reset
-    document.getElementById("custom-rate-container").style.display = "none";
+    document.getElementById("customize-rate-container").style.display = "none";
 });
