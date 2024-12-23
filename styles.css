@@ -85,6 +85,12 @@ form select:focus {
     border: 1px solid #ffd966;
 }
 
+/* Custom Rate Field Highlight */
+#custom-rate {
+    background-color: #fffae6;
+    border: 1px solid #ffd966;
+}
+
 /* Buttons Styling */
 .buttons {
     margin-top: 20px;
