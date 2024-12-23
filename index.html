@@ -52,6 +52,12 @@
                 <!-- Dynamic Options Added Here -->
             </select>
 
+            <!-- Custom Rate Input -->
+            <div id="custom-rate-container" style="display: none;">
+                <label for="custom-rate">Custom Rate (%):</label>
+                <input type="number" id="custom-rate" placeholder="Enter custom rate" />
+            </div>
+
             <label for="international-rate">International Rate (%):</label>
             <input type="number" id="international-rate" placeholder="Enter international rate percentage" value="1.3">
 
@@ -102,9 +108,10 @@
         <div id="notes">
             <h4>Notes:</h4>
             <ul>
-                <li>Sales tax rates vary by state and depend on the buyer's location.</li>
+                <li><strong>Sales tax rates</strong> vary by state and depend on the buyer's location.</li>
                 <li>For payments below 100 USD, Payoneer applies a 1 USD fee, while payments of 100 USD or more incur no charges. This fee is already included in the Order Earnings (MYR).</li>
                 <li>All fee percentages are set to default values but can be changed if needed.</li>
+                <li>The <strong>Category Rate (%)</strong> field has a drop-down list to select applicable rates. Choose "Custom" to manually input a value.</li>
             </ul>
         </div>
     </div>
