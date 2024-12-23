@@ -7,7 +7,7 @@ const starterRates = [
     { label: "Jewelry & Watches (15%)", value: "15" },
     { label: "Athletic Shoes (13.25%)", value: "13.25" },
     { label: "Women's Clothing, Shoes, Bags & HandBags (15%)", value: "15" },
-    { label: "Custom", value: "custom" }
+    { label: "Customize", value: "customize" }
 ];
 
 const basicRates = [
@@ -24,7 +24,7 @@ const basicRates = [
     { label: "eBay Motors Parts - Protective Gear (12.35%)", value: "12.35" },
     { label: "Musical Instruments (6.35%)", value: "6.35" },
     { label: "Stamps (9.35%)", value: "9.35" },
-    { label: "Custom", value: "custom" }
+    { label: "Customize", value: "customize" }
 ];
 
 // Dynamically populate the category rate dropdown based on store selection
@@ -52,7 +52,7 @@ document.querySelector('input[name="store"][value="starter"]').dispatchEvent(new
 
 // Handle "Custom" rate selection
 document.getElementById("category-rate").addEventListener("change", (e) => {
-    const customRateContainer = document.getElementById("custom-rate-container");
+    const customRateContainer = document.getElementById("customize-rate-container");
 
     if (e.target.value === "custom") {
         customRateContainer.style.display = "block"; // Show input for custom rate
