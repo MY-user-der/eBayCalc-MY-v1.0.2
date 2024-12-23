@@ -1,120 +1,167 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eBay Calculator (MY)</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1 class="header-title">eBay Calculator (MY)</h1>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Flag_of_Malaysia.svg" alt="Flag of Malaysia" class="malaysia-flag">
-        </div>
+// Category rates based on the store subscription type
+const starterRates = [
+    { label: "Most Categories (13.25%)", value: "13.25" },
+    { label: "Books & Magazines, DVDs Movies, Music (14.95%)", value: "14.95" },
+    { label: "Coins & Paper Money (13.25%)", value: "13.25" },
+    { label: "Musical Instruments (6.35%)", value: "6.35" },
+    { label: "Jewelry & Watches (15%)", value: "15" },
+    { label: "Athletic Shoes (13.25%)", value: "13.25" },
+    { label: "Women's Clothing, Shoes, Bags & HandBags (15%)", value: "15" },
+    { label: "Customize", value: "customize" }
+];
 
-        <!-- Store Subscription Radio Buttons -->
-        <label><strong>Store Subscription:</strong></label>
-        <div id="store-subscription">
-            <label>
-                <input type="radio" name="store" value="starter" checked>
-                Starter Store
-            </label>
-            <label>
-                <input type="radio" name="store" value="basic">
-                Basic Store or Higher
-            </label>
-        </div>
+const basicRates = [
+    { label: "Most Categories (12.35%)", value: "12.35" },
+    { label: "Books & Magazines, DVDs Movies, Music (14.95%)", value: "14.95" },
+    { label: "Clothing, Shoes (12.35%)", value: "12.35" },
+    { label: "Women's Bags & HandBags (13%)", value: "13" },
+    { label: "Athletic Shoes (12.35%)", value: "12.35" },
+    { label: "Coins & Paper Money (9%)", value: "9" },
+    { label: "Consumer Electronics (9%)", value: "9" },
+    { label: "Jewelry & Watches (13%)", value: "13" },
+    { label: "eBay Motors (11.35%)", value: "11.35" },
+    { label: "eBay Motors Parts - Tires, Wheels (9.35%)", value: "9.35" },
+    { label: "eBay Motors Parts - Protective Gear (12.35%)", value: "12.35" },
+    { label: "Musical Instruments (6.35%)", value: "6.35" },
+    { label: "Stamps (9.35%)", value: "9.35" },
+    { label: "Customize", value: "customize" }
+];
 
-        <form id="calculator-form">
-            <!-- Input Fields -->
-            <label for="item-cost">Item Cost (MYR):</label>
-            <input type="number" id="item-cost" placeholder="Enter item cost in MYR" required>
+// Dynamically populate the category rate dropdown based on store selection
+document.querySelectorAll('input[name="store"]').forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+        const categoryRate = document.getElementById("category-rate");
+        categoryRate.innerHTML = ""; // Clear existing options
 
-            <label for="shipping-cost">Shipping Cost (MYR):</label>
-            <input type="number" id="shipping-cost" placeholder="Enter shipping cost in MYR" required>
+        const rates = e.target.value === "starter" ? starterRates : basicRates;
 
-            <label for="selling-price">Selling Price (USD):</label>
-            <input type="number" id="selling-price" placeholder="Enter selling price in USD" required>
+        rates.forEach((rate) => {
+            const option = document.createElement("option");
+            option.value = rate.value;
+            option.textContent = rate.label;
+            categoryRate.appendChild(option);
+        });
 
-            <label for="shipping-charged">Shipping Charged (USD):</label>
-            <input type="number" id="shipping-charged" placeholder="Enter shipping charged in USD" required>
+        // Automatically trigger event for "Custom" behavior if pre-selected
+        categoryRate.dispatchEvent(new Event("change"));
+    });
+});
 
-            <label for="withdrawal-rate">Payoneer Rate (MYR/USD):</label>
-            <input type="number" id="withdrawal-rate" placeholder="Enter MYR/USD rate" value="4.15" required>
+// Trigger the category rate update on page load for default store selection (starter)
+document.querySelector('input[name="store"][value="starter"]').dispatchEvent(new Event("change"));
 
-            <h3>Fees Percentage</h3>
-            <label for="sales-tax">Sales Tax (%):</label>
-            <input type="number" id="sales-tax" placeholder="Enter sales tax percentage" value="7">
+// Handle "Custom" rate selection
+document.getElementById("category-rate").addEventListener("change", (e) => {
+    const customizeRateContainer = document.getElementById("customize-rate-container");
 
-            <label for="category-rate">Category Rate (%):</label>
-            <select id="category-rate">
-                <!-- Dynamic Options Added Here -->
-            </select>
+    if (e.target.value === "customize") {
+        customizeRateContainer.style.display = "block"; // Show input for custom rate
+    } else {
+        customizeRateContainer.style.display = "none"; // Hide input for custom rate
+    }
+});
 
-            <!-- Custom Rate Input -->
-            <div id="customize-rate-container" style="display: none;">
-                <label for="customize-rate">Customize Rate (%):</label>
-                <input type="number" id="customize-rate" placeholder="Enter customize rate" />
-            </div>
+// Function to restrict the input to only allow up to two decimals
+function limitDecimalInput(event) {
+    const input = event.target;
+    let value = input.value;
 
-            <label for="international-rate">International Rate (%):</label>
-            <input type="number" id="international-rate" placeholder="Enter international rate percentage" value="1.3">
+    // Regular expression to match numbers with up to 2 decimals
+    const regex = /^\d+(\.\d{0,2})?$/;
 
-            <label for="volume-discount">Volume Discount (%):</label>
-            <input type="number" id="volume-discount" placeholder="Enter volume discount percentage" value="0.2">
+    if (!regex.test(value)) {
+        // Remove the last character if it exceeds two decimals
+        input.value = value.slice(0, -1);
+    }
+}
 
-            <label for="per-order-fee">Per Order Fee (USD):</label>
-            <input type="number" id="per-order-fee" placeholder="Enter per order fee in USD" value="0.40">
+// Add event listeners for inputs to restrict decimals
+document.querySelectorAll('#item-cost, #shipping-cost, #selling-price, #shipping-charged, #withdrawal-rate, #sales-tax, #international-rate, #volume-discount, #per-order-fee, #sst, #ad-fee, #customize-rate').forEach((inputField) => {
+    inputField.addEventListener("input", limitDecimalInput);
+});
 
-            <label for="sst">SST (%):</label>
-            <input type="number" id="sst" placeholder="Enter SST percentage" value="8">
+// Calculation Logic
+document.getElementById("calculate-btn").addEventListener("click", () => {
+    try {
+        // Retrieve input values
+        const itemCost = parseFloat(document.getElementById("item-cost").value) || 0;
+        const shippingCost = parseFloat(document.getElementById("shipping-cost").value) || 0;
+        const sellingPrice = parseFloat(document.getElementById("selling-price").value) || 0;
+        const shippingCharge = parseFloat(document.getElementById("shipping-charged").value) || 0;
+        const withdrawalRate = parseFloat(document.getElementById("withdrawal-rate").value) || 4.15;
 
-            <label for="ad-fee">Ad Fee (%):</label>
-            <input type="number" id="ad-fee" placeholder="Enter Ad Fee percentage" value="">
+        const salesTaxRate = parseFloat(document.getElementById("sales-tax").value) / 100 || 0.07;
+        const categoryRateDropdown = document.getElementById("category-rate");
+        let categoryRate = parseFloat(categoryRateDropdown.value) / 100 || 0.1325;
 
-            <!-- Buttons -->
-            <div class="buttons">
-                <button type="button" id="calculate-btn" class="calculate-btn">Calculate</button>
-                <button type="button" id="reset-btn" class="reset-btn">Reset</button>
-            </div>
-        </form>
+        if (categoryRateDropdown.value === "customize") {
+            const customizeRateInput = parseFloat(document.getElementById("customize-rate").value) || 0;
+            categoryRate = customizeRateInput / 100;
+        }
 
-        <!-- Results Section -->
-        <div id="results">
-            <h3 class="results-label">Results</h3>
-            <h4 class="section-label">Fees</h4>
-            <p>Final Value Fees (USD): <span id="final-value-fees-usd">-</span></p>
-            <p>International Fee (USD): <span id="international-fee-usd">-</span></p>
-            <p>Volume Discount (USD): <span id="volume-discount-usd">-</span></p>
-            <p>Per Order Fee (USD): <span id="per-order-fee-usd">-</span></p>
-            <p>Total Fees (USD): <span id="total-fee-usd">-</span></p>
-            <p>SST (USD): <span id="sst-usd">-</span></p>
-            <p>Total Fees (Includes SST) (USD): <span id="total-fees-includes-sst-usd">-</span></p>
+        const internationalRate = parseFloat(document.getElementById("international-rate").value) / 100 || 0.013;
+        const volumeDiscountRate = parseFloat(document.getElementById("volume-discount").value) / 100 || 0.002;
+        const perOrderFee = parseFloat(document.getElementById("per-order-fee").value) || 0.4;
+        const sstRate = parseFloat(document.getElementById("sst").value) / 100 || 0.08;
+        const adFeeRate = parseFloat(document.getElementById("ad-fee").value) / 100 || 0.0;
 
-            <h4 class="section-label">Earnings and Profits</h4>
-            <p>Total Price (USD): <span id="total-price-usd">-</span></p>
-            <p>Order Total (USD): <span id="order-total-usd">-</span></p>
-            <p>Sales Tax (USD): <span id="sales-tax-usd">-</span></p>
-            <p>Total Fees (Includes SST) (USD): <span id="total-fees-includes-sst-earnings-usd">-</span></p>
-            <p>Ad Fee Standard (USD): <span id="ad-fee-standard-usd">-</span></p>
-            <p>Order Earnings (USD): <span id="earnings-usd">-</span></p>
-            <p>Order Earnings (MYR): <span id="earnings-myr">-</span></p>
-            <p>Total Cost (MYR): <span id="total-cost-myr">-</span></p>
-            <p>Profit (MYR): <span id="profits-myr">-</span></p>
-        </div>
-    
-        <!-- Notes Section -->
-        <div id="notes">
-            <h4>Notes:</h4>
-            <ul>
-                <li><strong>Sales tax rates</strong> vary by state and depend on the buyer's location.</li>
-                <li>For payments below 100 USD, Payoneer applies a 1 USD fee, while payments of 100 USD or more incur no charges. This fee is already included in the Order Earnings (MYR).</li>
-                <li>All fee percentages are set to default values but can be changed if needed.</li>
-                <li>The <strong>Category Rate (%)</strong> field has a drop-down list to select applicable rates. Choose "Customize" to manually input a value.</li>
-            </ul>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+        // Perform calculations
+        const basePrice = sellingPrice + shippingCharge;
+        const salesTax = basePrice * salesTaxRate;
+        const orderTotal = basePrice + salesTax;
+
+        const finalValueFees = orderTotal * categoryRate;
+        const internationalFee = orderTotal * internationalRate;
+        const volumeDiscount = orderTotal * volumeDiscountRate;
+        const totalFee = finalValueFees + internationalFee - volumeDiscount + perOrderFee;
+        const sst = totalFee * sstRate;
+        const totalFeesWithSST = totalFee + sst;
+
+        const adFee = orderTotal * adFeeRate;
+        const adFeeWithSST = adFee + (adFee * sstRate);
+
+        const earningsUSD = orderTotal - salesTax - totalFeesWithSST - adFeeWithSST;
+
+        let earningsMYR;
+        if (earningsUSD < 100) {
+            earningsMYR = (earningsUSD - 1) * withdrawalRate; // Deduct $1 for earnings < $100
+        } else {
+            earningsMYR = earningsUSD * withdrawalRate;
+        }
+
+        const totalCostMYR = itemCost + shippingCost;
+        const profitsMYR = earningsMYR - totalCostMYR;
+
+        // Update Results Section
+        document.getElementById("final-value-fees-usd").textContent = `-${finalValueFees.toFixed(2)}`;
+        document.getElementById("international-fee-usd").textContent = `-${internationalFee.toFixed(2)}`;
+        document.getElementById("volume-discount-usd").textContent = volumeDiscount.toFixed(2);
+        document.getElementById("per-order-fee-usd").textContent = `-${perOrderFee.toFixed(2)}`;
+        document.getElementById("total-fee-usd").textContent = `-${totalFee.toFixed(2)}`;
+        document.getElementById("sst-usd").textContent = `-${sst.toFixed(2)}`;
+        document.getElementById("total-fees-includes-sst-usd").textContent = `-${totalFeesWithSST.toFixed(2)}`;
+
+        document.getElementById("total-price-usd").textContent = basePrice.toFixed(2);
+        document.getElementById("order-total-usd").textContent = orderTotal.toFixed(2);
+        document.getElementById("sales-tax-usd").textContent = `-${salesTax.toFixed(2)}`;
+        document.getElementById("total-fees-includes-sst-earnings-usd").textContent = `-${totalFeesWithSST.toFixed(2)}`;
+        document.getElementById("ad-fee-standard-usd").textContent = `-${adFeeWithSST.toFixed(2)}`;
+        document.getElementById("earnings-usd").textContent = earningsUSD.toFixed(2);
+        document.getElementById("earnings-myr").textContent = earningsMYR.toFixed(2);
+        document.getElementById("total-cost-myr").textContent = totalCostMYR.toFixed(2);
+        document.getElementById("profits-myr").textContent = profitsMYR.toFixed(2);
+    } catch (error) {
+        console.error("Calculation error:", error);
+    }
+});
+
+// Reset the form and clear results
+document.getElementById("reset-btn").addEventListener("click", () => {
+    document.getElementById("calculator-form").reset();
+    document.querySelectorAll("#results p span").forEach((span) => {
+        span.textContent = "-";
+    });
+
+    // Hide custom rate input on reset
+    document.getElementById("customize-rate-container").style.display = "none";
+});
